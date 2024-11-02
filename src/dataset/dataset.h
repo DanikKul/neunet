@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdlib.h>
+#include <cstdlib>
 #include "../neural_net/nnet.h"
 #include "../neural_net/errors.h"
 
