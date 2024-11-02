@@ -8,12 +8,12 @@ int main() {
 
 //    -------------TRAIN MODEL-------------
 
-//    nn::NeuralNet net({ 2, 3, 3, 1 });
-//
-//    dataset::Dataset trainset("/Users/dankulakovich/CLionProjects/nn/train/XOR/train.dset");
-//    dataset::train(net, trainset, 1000000, false, 0.000001);
-//
-//    net.save("/Users/dankulakovich/CLionProjects/nn/models/XOR.model");
+    nn::NeuralNet net({ 2, 3, 3, 1 });
+
+    dataset::Dataset trainset("/Users/dankulakovich/CLionProjects/nn/train/XOR/train.dset");
+    dataset::train(net, trainset, 1000000, false, 0.000001);
+
+    net.save("/Users/dankulakovich/CLionProjects/nn/models/XOR.model");
 
 //    -------------LOAD AND TEST-------------
 

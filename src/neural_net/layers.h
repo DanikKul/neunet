@@ -1,10 +1,6 @@
 #pragma once
 #include "../matrix/matrix.h"
 
-#define LAYER_INPUT 0
-#define LAYER_HIDDEN 1
-#define LAYER_OUTPUT 2
-
 using namespace matrix;
 
 namespace layers {
