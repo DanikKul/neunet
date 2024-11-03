@@ -8,24 +8,23 @@
 #include "../matrix/matrix.h"
 
 namespace errors {
-    float MSE(const matrix::Matrix& actual, const matrix::Matrix& expected) {
-        double sum = 0;
+    inline float MSE(const matrix::Matrix& actual, const matrix::Matrix& expected) {
+        float sum = 0;
         for (int i = 0; i < actual.cols; i++) {
-            sum += pow(expected.at(0, i) - actual.at(0, i), 2);
+            sum += (float)pow(expected.at(0, i) - actual.at(0, i), 2);
         }
-        return sum / actual.cols;
+        return sum / (float)actual.cols;
     }
 
-    float rootMSE(const matrix::Matrix& actual, const matrix::Matrix& expected) {
-        return sqrt(MSE(actual, expected));
+    inline float rootMSE(const matrix::Matrix& actual, const matrix::Matrix& expected) {
+        return (float)std::sqrt(MSE(actual, expected));
     }
 
-    float arctanSE(const matrix::Matrix& actual, const matrix::Matrix& expected) {
-        double err = 0;
-        double sum = 0;
+    inline float arctanSE(const matrix::Matrix& actual, const matrix::Matrix& expected) {
+        float sum = 0;
         for (int i = 0; i < actual.cols; i++) {
-            sum += pow(atan(expected.at(0, i) - actual.at(0, i)), 2);
+            sum += (float)pow(std::atan(expected.at(0, i) - actual.at(0, i)), 2);
         }
-        return sum / actual.cols;
+        return sum / (float)actual.cols;
     }
 }

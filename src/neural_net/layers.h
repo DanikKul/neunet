@@ -10,17 +10,13 @@ namespace layers {
             outputs = Matrix(1, n);
             biased = Matrix(1, n);
             weights = Matrix(0, 0);
-            outputs.alloc();
-            biased.alloc();
-            outputs.fillVal(0);
-            biased.fillVal(0);
         }
 
-        Layer(Layer&& other) noexcept {
-            outputs = other.outputs;
-            biased = other.biased;
-            weights = other.weights;
-        }
+        Layer(Layer&& other) noexcept :
+          outputs(other.outputs),
+          biased(other.biased),
+          weights(other.weights)
+        {}
 
         Layer next_layer(int neuron_count) {
             Layer next(neuron_count);

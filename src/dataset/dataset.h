@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdlib>
+#include <chrono>
 #include "../neural_net/nnet.h"
 #include "../neural_net/errors.h"
 
@@ -127,18 +128,21 @@ namespace dataset {
 
     void train(NeuralNet &nn, const Dataset &dataset, int epoch, bool verbose = false, float etalonError = -1) {
         bool exit_train = false;
+        int completion = 0.f;
         for (int _ = 0; _ < epoch; _++) {
             if (exit_train) {
                 break;
             }
+            if (((100 * _) / epoch) % 10 == 0) {
+                printf("Progress: %d%%\n", completion);
+                completion += 10;
+            }
             for (int i = 0; i < dataset.count(); i++) {
                 Matrix input = dataset.get_input(i);
                 Matrix expected = dataset.get_output(i);
-
                 nn.pass(input);
                 Matrix& outputs = nn.getOutputs();
                 nn.backprop(expected);
-
                 float err = errors::MSE(outputs, expected);
                 if (verbose) {
                     printf("Epoch: %d, error: %.4f\n", _, err);
@@ -168,6 +172,11 @@ namespace dataset {
 
             if (verbose) {
                 printf("Test case: %d, error: %.4f\n", i, err);
+                printf("Got:\n");
+                outputs.print();
+                printf("Expected:\n");
+                expected.print();
+                printf("\n\n");
             }
         }
         if (failed > 0) {

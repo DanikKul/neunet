@@ -2,20 +2,21 @@
 
 #include <cassert>
 #include <cmath>
+#include <utility>
 
 #define T float
 
 namespace matrix {
 
-    T act_sigmoid(T x) {
+    inline T act_sigmoid(T x) {
         return 1.f / (1.f + expf(-x));
     }
 
-    T act_linear(T x) {
+    inline T act_linear(T x) {
         return x;
     }
 
-    T act_tanhyp(T x) {
+    inline T act_tanhyp(T x) {
         return tanh(x);
     }
 
@@ -24,23 +25,21 @@ namespace matrix {
 
         Matrix() = default;
 
-        Matrix(int m_rows, int m_cols) {
+        Matrix(int m_rows, int m_cols, float value = 0) {
             this->rows = m_rows;
             this->cols = m_cols;
-            this->alloc();
+            this->matrix = std::vector(m_rows, std::vector(m_cols, value));
         }
 
-        Matrix(int m_rows, int m_cols, T **data) {
-            this->copyData(data, m_rows, m_cols);
+        Matrix(int m_rows, int m_cols, std::vector<std::vector<T>> data) {
+            this->copyData(std::move(data), m_rows, m_cols);
         }
 
         Matrix (const Matrix& other) {
             this->copyData(other.matrix, other.rows, other.cols);
         }
 
-        ~Matrix() {
-            this->dealloc();
-        }
+        ~Matrix() = default;
 
         void setCols(int m_cols) {
             this->cols = m_cols;
@@ -50,39 +49,19 @@ namespace matrix {
             this->rows = m_rows;
         }
 
-        void setData(T **data) {
-            this->matrix = data;
+        void setData(std::vector<std::vector<T>> data) {
+            this->matrix = std::move(data);
         }
 
-        void copyData(T **data, int m_rows, int m_cols) {
+        void copyData(std::vector<std::vector<T>> data, int m_rows, int m_cols) {
             this->rows = m_rows;
             this->cols = m_cols;
-            this->alloc();
+            this->matrix = std::vector(m_rows, std::vector<T>(m_cols, 0));
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < this->cols; j++) {
                     this->matrix[i][j] = data[i][j];
                 }
             }
-        }
-
-        void alloc() {
-            this->matrix = (T **) malloc(this->rows * sizeof(T *));
-            for (int i = 0; i < this->rows; i++) {
-                this->matrix[i] = (T *) malloc(this->cols * sizeof(T));
-            }
-        }
-
-        void dealloc() {
-            for (int i = 0; i < this->rows; i++) {
-                if (this->matrix[i] != nullptr) {
-                    free(this->matrix[i]);
-                }
-            }
-            if (this->matrix != nullptr) {
-                free(this->matrix);
-            }
-            this->rows = 0;
-            this->cols = 0;
         }
 
         void fillVal(T value) {
@@ -144,8 +123,7 @@ namespace matrix {
 
         Matrix &operator*=(const Matrix &other) {
             assert(this->cols == other.rows);
-            Matrix m(this->rows, other.cols);
-            m.alloc();
+            Matrix m(this->rows, other.cols, 0);
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < other.cols; j++) {
                     for (int k = 0; k < this->cols; k++) {
@@ -153,22 +131,19 @@ namespace matrix {
                     }
                 }
             }
-            this->dealloc();
             this->copyData(m.matrix, m.rows, m.cols);
             return *this;
         }
 
-        Matrix& operator=(Matrix copy) {
+        Matrix& operator=(const Matrix& copy) {
             if (&copy != this) {
                 this->copyData(copy.matrix, copy.rows, copy.cols);
             }
-//            copy.dealloc();
             return *this;
         }
 
         Matrix operator-(const Matrix &other) {
-            Matrix m(this->rows, this->cols);
-            m.alloc();
+            Matrix m(this->rows, this->cols, 0);
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < this->cols; j++) {
                     m.set(i, j, this->at(i, j) - other.at(i, j));
@@ -179,8 +154,7 @@ namespace matrix {
 
         Matrix operator*(const Matrix &other) {
             assert(this->cols == other.rows);
-            Matrix m(this->rows, other.cols);
-            m.alloc();
+            Matrix m(this->rows, other.cols, 0);
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < other.cols; j++) {
                     for (int k = 0; k < this->cols; k++) {
@@ -191,10 +165,9 @@ namespace matrix {
             return m;
         }
 
-        Matrix multiply_like_value(const Matrix &other) {
+        Matrix multiply_like_value(const Matrix &other) const {
             assert(this->cols == other.cols && this->rows == other.rows);
-            Matrix m(this->rows, this->cols);
-            m.alloc();
+            Matrix m(this->rows, this->cols, 0);
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < this->cols; j++) {
                     m.set(i, j, this->at(i, j) * other.at(i, j));
@@ -214,8 +187,7 @@ namespace matrix {
         }
 
         Matrix operator*(T value) {
-            Matrix m(this->rows, this->cols);
-            m.alloc();
+            Matrix m(this->rows, this->cols, 0);
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < this->cols; j++) {
                     m.set(i, j, matrix[i][j] * value);
@@ -225,8 +197,7 @@ namespace matrix {
         }
 
         Matrix transpose() {
-            Matrix m(this->cols, this->rows);
-            m.alloc();
+            Matrix m(this->cols, this->rows, 0);
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < this->cols; j++) {
                     m.set(j, i, matrix[i][j]);
@@ -291,6 +262,6 @@ namespace matrix {
 
         int rows;
         int cols;
-        T **matrix;
+        std::vector<std::vector<T>> matrix;
     };
 }

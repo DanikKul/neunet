@@ -44,17 +44,14 @@ namespace nn {
         void backprop(const Matrix& expected) {
             Matrix& output = layers[layers.size() - 1].outputs;
             Matrix delta = output - expected;
-
             for (size_t i = layers.size() - 1; i > 0; i--) {
                 layers::Layer& curr = layers[i];
                 layers::Layer& prev = layers[i - 1];
 
-                curr.biased += delta * (-learn_rate);
+                curr.biased += delta * -learn_rate;
+                prev.weights += (prev.outputs.transpose() * delta) * -learn_rate;
 
-                prev.weights += (prev.outputs.transpose() * delta) * (-learn_rate);
-
-                Matrix one = Matrix(prev.outputs.rows, prev.outputs.cols);
-                one.fillVal(1);
+                Matrix one = Matrix(prev.outputs.rows, prev.outputs.cols, 1);
                 Matrix sigmoid_derivative = prev.outputs.multiply_like_value(one - prev.outputs);
 
                 delta = (delta * prev.weights.transpose()).multiply_like_value_inplace(sigmoid_derivative);
