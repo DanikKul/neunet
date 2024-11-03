@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <armadillo>
 #include <utility>
 
 #define T float
@@ -152,12 +153,14 @@ namespace matrix {
             return m;
         }
 
-        Matrix operator*(const Matrix &other) {
+        Matrix operator*(const Matrix &other) const {
             assert(this->cols == other.rows);
             Matrix m(this->rows, other.cols, 0);
+
+            #pragma omp parallel for
             for (int i = 0; i < this->rows; i++) {
-                for (int j = 0; j < other.cols; j++) {
-                    for (int k = 0; k < this->cols; k++) {
+                for (int k = 0; k < this->cols; k++) {
+                    for (int j = 0; j < other.cols; j++) {
                         m.matrix[i][j] += this->at(i, k) * other.at(k, j);
                     }
                 }
@@ -188,6 +191,7 @@ namespace matrix {
 
         Matrix operator*(T value) {
             Matrix m(this->rows, this->cols, 0);
+            #pragma omp parallel for
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < this->cols; j++) {
                     m.set(i, j, matrix[i][j] * value);
@@ -198,6 +202,7 @@ namespace matrix {
 
         Matrix transpose() {
             Matrix m(this->cols, this->rows, 0);
+#pragma omp parallel for
             for (int i = 0; i < this->rows; i++) {
                 for (int j = 0; j < this->cols; j++) {
                     m.set(j, i, matrix[i][j]);

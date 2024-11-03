@@ -25,34 +25,34 @@ int main() {
     // dataset::test(net1, testset, true, 0.01);
 
 //    -------------MNIST DATASET-------------
-    // printf("Started MNIST dataset loading\n");
-    // auto start = high_resolution_clock::now();
-    // const char* train_images_path = "/home/dan/CLionProjects/neunet/train/MNIST/train-images.idx3-ubyte";
-    // const char* train_labels_path = "/home/dan/CLionProjects/neunet/train/MNIST/train-labels.idx1-ubyte";
-    // dataset::MNISTDataset mnist(train_images_path, train_labels_path, 6000);
-    // auto stop = high_resolution_clock::now();
-    // auto duration = duration_cast<milliseconds>(stop - start);
-    // printf("Ended MNIST dataset loading. Took %llu ms\n\n", duration.count());
-    //
-    // printf("Started MNIST net building...\n");
-    // start = high_resolution_clock::now();
-    // NeuralNet netMNIST({ 784, 20, 10, 10 });
-    // stop = high_resolution_clock::now();
-    // duration = duration_cast<milliseconds>(stop - start);
-    // printf("Ended MNIST net building. Took %llu ms\n\n", duration.count());
-    //
-    // printf("Started MNIST net training...\n");
-    // start = high_resolution_clock::now();
-    // train(netMNIST, mnist, 100, false);
-    // stop = high_resolution_clock::now();
-    // duration = duration_cast<milliseconds>(stop - start);
-    // printf("Ended MNIST net training. Took %llu ms\n\n", duration.count());
-    // netMNIST.save("/home/dan/CLionProjects/neunet/models/MNIST.model");
+    printf("Started MNIST dataset loading\n");
+    auto start = high_resolution_clock::now();
+    const char* train_images_path = "/home/dan/CLionProjects/neunet/train/MNIST/train-images.idx3-ubyte";
+    const char* train_labels_path = "/home/dan/CLionProjects/neunet/train/MNIST/train-labels.idx1-ubyte";
+    dataset::MNISTDataset mnist(train_images_path, train_labels_path, 60000);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<milliseconds>(stop - start);
+    printf("Ended MNIST dataset loading. Took %llu ms\n\n", duration.count());
 
-    nn::NeuralNet mnistTest;
-    dataset::MNISTDataset testset("/home/dan/CLionProjects/neunet/train/MNIST/train-images.idx3-ubyte", "/home/dan/CLionProjects/neunet/train/MNIST/train-labels.idx1-ubyte", 10000);
-    mnistTest.load("/home/dan/CLionProjects/neunet/models/MNIST.model");
-    dataset::test(mnistTest, testset, true, 0.01);
+    printf("Started MNIST net building...\n");
+    start = high_resolution_clock::now();
+    NeuralNet netMNIST({ 784, 20, 10, 10 });
+    stop = high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stop - start);
+    printf("Ended MNIST net building. Took %llu ms\n\n", duration.count());
+
+    printf("Started MNIST net training...\n");
+    start = high_resolution_clock::now();
+    train(netMNIST, mnist, 1000, false);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<milliseconds>(stop - start);
+    printf("Ended MNIST net training. Took %llu ms\n\n", duration.count());
+    netMNIST.save("/home/dan/CLionProjects/neunet/models/MNIST.model");
+
+    // nn::NeuralNet mnistTest;
+    // dataset::MNISTDataset testset("/home/dan/CLionProjects/neunet/train/MNIST/train-images.idx3-ubyte", "/home/dan/CLionProjects/neunet/train/MNIST/train-labels.idx1-ubyte", 10000);
+    // mnistTest.load("/home/dan/CLionProjects/neunet/models/MNIST.model");
+    // dataset::test(mnistTest, testset, true, 0.01);
 
     return 0;
 }

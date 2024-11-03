@@ -133,11 +133,9 @@ namespace dataset {
             if (exit_train) {
                 break;
             }
-            if (((100 * _) / epoch) % 10 == 0) {
-                printf("Progress: %d%%\n", completion);
-                completion += 10;
-            }
-            for (int i = 0; i < dataset.count(); i++) {
+            printf("epoch: %d\n", _);
+            int count = dataset.count();
+            for (int i = 0; i < count; i++) {
                 Matrix input = dataset.get_input(i);
                 Matrix expected = dataset.get_output(i);
                 nn.pass(input);

@@ -1,7 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <omp.h>
+#include <chrono>
 #include "layers.h"
+
+using namespace std::chrono;
 
 namespace nn {
     class NeuralNet {
@@ -9,10 +13,11 @@ namespace nn {
 
         NeuralNet() = default;
 
-        NeuralNet(const std::vector<int>& config) {
+        NeuralNet(const std::vector<int>& config, float learn_rate = 0.01) {
 
             assert(!config.empty());
 
+            this->learn_rate = learn_rate;
             for (int i = 0; i < config.size(); i++) {
                 int neurons_count = config[i];
                 if (i == 0) {
@@ -47,9 +52,12 @@ namespace nn {
             for (size_t i = layers.size() - 1; i > 0; i--) {
                 layers::Layer& curr = layers[i];
                 layers::Layer& prev = layers[i - 1];
-
                 curr.biased += delta * -learn_rate;
+                // auto start = high_resolution_clock::now();
                 prev.weights += (prev.outputs.transpose() * delta) * -learn_rate;
+                // auto stop = high_resolution_clock::now();
+                // auto duration = duration_cast<microseconds>(stop - start);
+                // printf("Backprop. Took %llu ms\n\n", duration.count());
 
                 Matrix one = Matrix(prev.outputs.rows, prev.outputs.cols, 1);
                 Matrix sigmoid_derivative = prev.outputs.multiply_like_value(one - prev.outputs);

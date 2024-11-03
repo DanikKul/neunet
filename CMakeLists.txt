@@ -8,6 +8,12 @@ add_executable(nn src/main.cpp
         src/neural_net/layers.h
         src/neural_net/nnet.h
         src/dataset/dataset.h
-        src/matrix/matrix.h)
+        src/matrix/matrix.h
+)
 
-target_compile_options(nn PUBLIC -ggdb3)
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(nn PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
+target_compile_options(nn PUBLIC -fopenmp -Ofast)
