@@ -16,11 +16,11 @@ namespace layers {
             biased.fillVal(0);
         }
 
-        Layer(Layer&& other) noexcept :
-                outputs(std::move(other.outputs)),
-                biased(std::move(other.biased)),
-                weights(std::move(other.weights))
-        {}
+        Layer(Layer&& other) noexcept {
+            outputs = other.outputs;
+            biased = other.biased;
+            weights = other.weights;
+        }
 
         Layer next_layer(int neuron_count) {
             Layer next(neuron_count);

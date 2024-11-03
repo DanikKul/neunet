@@ -34,6 +34,10 @@ namespace matrix {
             this->copyData(data, m_rows, m_cols);
         }
 
+        Matrix (const Matrix& other) {
+            this->copyData(other.matrix, other.rows, other.cols);
+        }
+
         ~Matrix() {
             this->dealloc();
         }
@@ -69,10 +73,16 @@ namespace matrix {
         }
 
         void dealloc() {
-//            for (int i = 0; i < this->rows; i++) {
-//                free(this->matrix[i]);
-//            }
-//            free(this->matrix);
+            for (int i = 0; i < this->rows; i++) {
+                if (this->matrix[i] != nullptr) {
+                    free(this->matrix[i]);
+                }
+            }
+            if (this->matrix != nullptr) {
+                free(this->matrix);
+            }
+            this->rows = 0;
+            this->cols = 0;
         }
 
         void fillVal(T value) {
@@ -145,6 +155,14 @@ namespace matrix {
             }
             this->dealloc();
             this->copyData(m.matrix, m.rows, m.cols);
+            return *this;
+        }
+
+        Matrix& operator=(Matrix copy) {
+            if (&copy != this) {
+                this->copyData(copy.matrix, copy.rows, copy.cols);
+            }
+//            copy.dealloc();
             return *this;
         }
 
